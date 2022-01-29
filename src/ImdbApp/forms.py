@@ -2,8 +2,9 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Optional
-from ImdbApp.models import User
+from ImdbApp.models import User, Movie
 from flask_login import current_user
+from datetime import datetime
 
 
 
@@ -73,9 +74,9 @@ class NewMovieForm(FlaskForm):
                            validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."),
                                        Length(min=3, max=50, message="Αυτό το πεδίο πρέπει να είναι από 3 έως 15 χαρακτήρες")])
 
-    movie_body = TextAreaField(label="Πλοκή Ταινίας",
+    movie_body = TextAreaField(label="Υπόθεση της Ταινίας",
                            validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."), 
-                                       Length(min=5, message="Το κείμενο της τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
+                                       Length(min=5, message="Η υπόθεσητης τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
     
     movie_image = FileField('Εικόνα Ταινίας', validators=[Optional(strip_whitespace=True),
                                                            FileAllowed([ 'jpg', 'jpeg', 'png' ],
@@ -84,15 +85,31 @@ class NewMovieForm(FlaskForm):
                                                            
     release_year = StringField(label="Έτος πρώτης προβολής ταινίας",
                            validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."), 
-                                       Length(min=4, message="Το κείμενο της τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
+                                       Length(min=1, max=4, message="Το έτος πρώτης προβολής πρέπει να έχει 4 ψηφία")])
 
     rating = StringField(label="Βαθμολογία Ταινίας",
                            validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."), 
-                                       Length(min=2, message="Το κείμενο της τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
+                                       Length(min=1, max=3, message="Η βαθμολογία της ταινίας πρέπει να είναι -από 1 έως 100"),
+                                       ])
 
     submit = SubmitField('Αποστολή')
 
+    def validate_movie_title(self, movie_title):
+        title = Movie.query.filter_by(movie_title=movie_title.data).first()
+        print(title)
+        if title:
+            raise ValidationError('Αυτή η ταινία υπάρχει ήδη!')
+    
+    def validate_release_year(self, release_year):
+       current_year = datetime.now().year
+       if int(release_year.data) <1888 or int(release_year.data)>current_year:
+           raise ValidationError(f'Το έτος πρώτης προβολής πρέπει να ειναι μετάξυ 1888 και {current_year}!')
 
+    def validate_rating(self, rating):
+      rating=int(rating.data)
+      if (rating<0 or rating>100):
+         raise ValidationError(f'Η βαθμολογία πρέπει να ειναι μετάξυ 1 και 100!')
+ 
 
 
 

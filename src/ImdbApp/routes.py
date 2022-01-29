@@ -145,6 +145,8 @@ def new_movie():
     if request.method == 'POST' and form.validate_on_submit():
         movie_title = form.movie_title.data
         movie_body = form.movie_body.data
+        release_year = form.release_year.data
+        rating = form.rating.data
 
 
         if form.movie_image.data:
@@ -156,9 +158,11 @@ def new_movie():
             movie = Movie(movie_title=movie_title,
                               movie_body=movie_body,
                               author=current_user,
-                              movie_image=image_file)
+                              movie_image=image_file,
+                              release_year=release_year,
+                              rating=rating)
         else:
-            movie = Movie(movie_title=movie_title, movie_body=movie_body, author=current_user)
+            movie = Movie(movie_title=movie_title, movie_body=movie_body, author=current_user, release_year=release_year, rating=rating)
 
         db.session.add(movie)
         db.session.commit()
