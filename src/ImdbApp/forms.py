@@ -68,19 +68,27 @@ class LoginForm(FlaskForm):
 
 
 
-class NewArticleForm(FlaskForm):
-    article_title = StringField(label="Τίτλος Άρθρου",
+class NewMovieForm(FlaskForm):
+    movie_title = StringField(label="Τίτλος Ταινίας",
                            validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."),
                                        Length(min=3, max=50, message="Αυτό το πεδίο πρέπει να είναι από 3 έως 15 χαρακτήρες")])
 
-    article_body = TextAreaField(label="Κείμενο Άρθρου",
+    movie_body = TextAreaField(label="Πλοκή Ταινίας",
                            validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."), 
-                                       Length(min=5, message="Το κείμενο του άρθρου πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
+                                       Length(min=5, message="Το κείμενο της τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
     
-    article_image = FileField('Εικόνα Άρθρου', validators=[Optional(strip_whitespace=True),
+    movie_image = FileField('Εικόνα Ταινίας', validators=[Optional(strip_whitespace=True),
                                                            FileAllowed([ 'jpg', 'jpeg', 'png' ],
                                                             'Επιτρέπονται μόνο αρχεία εικόνων τύπου jpg, jpeg και png!'),
                                                            maxImageSize(max_size=2)])
+                                                           
+    release_year = StringField(label="Έτος πρώτης προβολής ταινίας",
+                           validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."), 
+                                       Length(min=4, message="Το κείμενο της τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
+
+    rating = StringField(label="Βαθμολογία Ταινίας",
+                           validators=[DataRequired(message="Αυτό το πεδίο δε μπορεί να είναι κενό."), 
+                                       Length(min=2, message="Το κείμενο της τανίας πρέπει να έχει τουλάχιστον 5 χαρακτήρες")])
 
     submit = SubmitField('Αποστολή')
 

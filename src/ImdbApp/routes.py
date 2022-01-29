@@ -1,14 +1,15 @@
+from datetime import datetime
 from flask import (render_template,
                    redirect,
                    url_for,
                    request,
                    flash, abort)
 
-from ImdbApp.forms import SignupForm, LoginForm, NewArticleForm, AccountUpdateForm
+from ImdbApp.forms import SignupForm, LoginForm, NewMovieForm, AccountUpdateForm
 
 from ImdbApp import app, db, bcrypt
 
-from ImdbApp.models import User, Article
+from ImdbApp.models import User, Movie
 
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -54,20 +55,20 @@ def image_save(image, where, size):
 @app.route("/")
 def root():
     page = request.args.get("page", 1, type=int)
-    articles = Article.query.order_by(Article.date_created.desc()).paginate(per_page=5, page=page)
-    return render_template("index.html", articles=articles)
+    movies = Movie.query.order_by(Movie.date_created.desc()).paginate(per_page=5, page=page)
+    return render_template("index.html", movies=movies)
 
 
 
-@app.route("/articles_by_author/<int:author_id>")
-def articles_by_author(author_id):
+@app.route("/movies_by_author/<int:author_id>")
+def movies_by_author(author_id):
 
     user = User.query.get_or_404(author_id)
 
     page = request.args.get("page", 1, type=int)
-    articles = Article.query.filter_by(author=user).order_by(Article.date_created.desc()).paginate(per_page=5, page=page)
+    movies = Movie.query.filter_by(author=user).order_by(Movie.date_created.desc()).paginate(per_page=5, page=page)
 
-    return render_template("articles_by_author.html", articles=articles, author=user)
+    return render_template("movies_by_author.html", movies=movies, author=user)
 
 
 
@@ -136,59 +137,59 @@ def logout():
 
 
 
-@app.route("/new_article/", methods=["GET", "POST"])
+@app.route("/new_movie/", methods=["GET", "POST"])
 @login_required
-def new_article():
-    form = NewArticleForm()
+def new_movie():
+    form = NewMovieForm()
 
     if request.method == 'POST' and form.validate_on_submit():
-        article_title = form.article_title.data
-        article_body = form.article_body.data
+        movie_title = form.movie_title.data
+        movie_body = form.movie_body.data
 
 
-        if form.article_image.data:
+        if form.movie_image.data:
             try:
-                image_file = image_save(form.article_image.data, 'articles_images', (640, 360))
+                image_file = image_save(form.movie_image.data, 'movies_images', (640, 360))
             except:
                 abort(415)
 
-            article = Article(article_title=article_title,
-                              article_body=article_body,
+            movie = Movie(movie_title=movie_title,
+                              movie_body=movie_body,
                               author=current_user,
-                              article_image=image_file)
+                              movie_image=image_file)
         else:
-            article = Article(article_title=article_title, article_body=article_body, author=current_user)
+            movie = Movie(movie_title=movie_title, movie_body=movie_body, author=current_user)
 
-        db.session.add(article)
+        db.session.add(movie)
         db.session.commit()
 
-        flash(f"Το άρθρο με τίτλο {article.article_title} δημιουργήθηκε με επιτυχία", "success")
+        flash(f"Το άρθρο με τίτλο {movie.movie_title} δημιουργήθηκε με επιτυχία", "success")
 
         return redirect(url_for("root"))
 
-    return render_template("new_article.html", form=form, page_title="Εισαγωγή Νέου Άρθρου")
+    return render_template("new_movie.html", form=form, page_title="Εισαγωγή Νέας Ταινίας", current_year=datetime.now().year)
 
 
 
 
-@app.route("/full_article/<int:article_id>", methods=["GET"])
-def full_article(article_id):
+@app.route("/full_movie/<int:movie_id>", methods=["GET"])
+def full_movie(movie_id):
 
-    article = Article.query.get_or_404(article_id)
+    movie = Movie.query.get_or_404(movie_id)
 
-    return render_template("full_article.html", article=article)
+    return render_template("full_movie.html", movie=movie)
 
 
 
-@app.route("/delete_article/<int:article_id>", methods=["GET", "POST"])
+@app.route("/delete_movie/<int:movie_id>", methods=["GET", "POST"])
 @login_required
-def delete_article(article_id):
+def delete_movie(movie_id):
 
-    article = Article.query.filter_by(id=article_id, author=current_user).first_or_404()
+    movie = Movie.query.filter_by(id=movie_id, author=current_user).first_or_404()
 
-    if article:
+    if movie:
 
-        db.session.delete(article)
+        db.session.delete(movie)
         db.session.commit()
 
         flash("Το άρθρο διεγράφη με επιτυχία.", "success")
@@ -235,32 +236,32 @@ def account():
 
 
 
-@app.route("/edit_article/<int:article_id>", methods=['GET', 'POST'])
+@app.route("/edit_movie/<int:movie_id>", methods=['GET', 'POST'])
 @login_required
-def edit_article(article_id):
+def edit_movie(movie_id):
 
-    article = Article.query.filter_by(id=article_id, author=current_user).first_or_404()
+    movie = Movie.query.filter_by(id=movie_id, author=current_user).first_or_404()
 
-    form = NewArticleForm(article_title=article.article_title, article_body=article.article_body)
+    form = NewMovieForm(movie_title=movie.movie_title, movie_body=movie.movie_body)
 
     if request.method == 'POST' and form.validate_on_submit():
-        article.article_title = form.article_title.data
-        article.article_body = form.article_body.data
+        movie.movie_title = form.movie_title.data
+        movie.movie_body = form.movie_body.data
 
 
-        if form.article_image.data:
+        if form.movie_image.data:
             try:
-                image_file = image_save(form.article_image.data, 'articles_images', (640, 360))
+                image_file = image_save(form.movie_image.data, 'movies_images', (640, 360))
             except:
                 abort(415)
 
-            article.article_image = image_file
+            movie.movie_image = image_file
 
 
         db.session.commit()
 
-        flash(f"Το άρθρο με τίτλο <b>{article.article_title}</b> ενημερώθηκε με επιτυχία.", "success")
+        flash(f"Το άρθρο με τίτλο <b>{movie.movie_title}</b> ενημερώθηκε με επιτυχία.", "success")
 
         return redirect(url_for('root'))
 
-    return render_template("new_article.html", form=form, page_title="Επεξεργασία Άρθρου")
+    return render_template("new_movie.html", form=form, page_title="Επεξεργασία Ταινίας")

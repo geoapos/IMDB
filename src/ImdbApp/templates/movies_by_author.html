@@ -8,6 +8,17 @@
 
 {% block content %}
 
+
+
+    <h2 class="aba_header">
+      Άρθρα από τον {{ author.username }}
+      <img class="rounded-circle profile-image" alt="{{ author.username }}" src="{{ url_for('static', filename='images/profiles_images/'+author.profile_image) }}" data-holder-rendered="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ author.username }}">
+    </h2>
+    <hr>
+
+
+
+
 {% if movies %}
     {% for movie in movies.items %}
 
@@ -40,6 +51,7 @@
         
 
     {% endfor %}
+{% endif %}
 
 
     {% for page_number in movies.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
@@ -48,10 +60,10 @@
 
             {% if movies.page == page_number %}
 
-                <a class="btn btn-primary" href="{{ url_for('root', page=page_number) }}">{{ page_number }}</a>
+                <a class="btn btn-primary" href="{{ url_for('movies_by_author', author_id=author.id, page=page_number) }}">{{ page_number }}</a>
 
             {% else %}
-                <a class="btn btn-outline-primary" href="{{ url_for('root', page=page_number) }}">{{ page_number }}</a>
+                <a class="btn btn-outline-primary" href="{{ url_for('movies_by_author', author_id=author.id, page=page_number) }}">{{ page_number }}</a>
             {% endif %}
 
         {% else %}
@@ -62,7 +74,6 @@
     {% endfor %}
 
 
-{% endif %}
 
 {% endblock content %}
 

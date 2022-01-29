@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Νέο Άρθρο
+{% endblock title %}
+
+
+{% block content %}
+
+
+<div class="container login-container">
+  <div class="row">
+    <div class="col-md-6 login-form-1">
+        <h3>{{ page_title }}</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            {{ form.movie_title.label(class="form-label") }}
+            {{ form.movie_title(class="form-control", required=False) }}
+            <div id="movie_titleHelp" class="form-text">Παρακαλώ εισάγετε τον τίτλο της τανίας.</div>
+            {% if form.movie_title.errors %}
+              <ul class=errors>
+              {% for error in form.movie_title.errors %}
+                <li class="alert text-danger">{{ error }}</li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+
+
+          <div class="mb-3">
+            {{ form.movie_body.label(class="form-label") }}
+            {{ form.movie_body(class="form-control", rows="5", required=False) }}
+            <div id="movie_bodyHelp" class="form-text">Παρακαλώ εισάγετε την πλοκή της τανίας.</div>
+            {% if form.movie_body.errors %}
+              <ul class=errors>
+              {% for error in form.movie_body.errors %}
+                <li class="alert text-danger">{{ error }}</li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+
+
+              <div class="mb-3">
+                {{ form.movie_image.label(class="form-label") }}
+                {{ form.movie_image(class="form-control") }}
+                <div id="movie_imageHelp" class="form-text">Παρακαλώ δώστε μία εικόνα για την ταινία σας.</div>
+                    {% if form.movie_image.errors %}
+                    <ul class=errors>
+                    {% for error in form.movie_image.errors %}
+                      <li class="alert text-danger">{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+              </div>
+
+              <div class="mb-3">
+                {{ form.release_year.label(class="form-label") }}
+                {{ form.release_year(class="form-control", required=False) }}
+                <div id="release_yearHelp" class="form-text">Παρακαλώ δώστε το έτος πρώτης προβολής ταινίας (από το 1888 έως το {{ current_year }}).</div>
+                {% if form.release_year.errors %}
+                  <ul class=errors>
+                  {% for error in form.release_year.errors %}
+                    <li class="alert text-danger">{{ error }}</li>
+                  {% endfor %}
+                  </ul>
+                {% endif %}
+              </div>
+
+              <div class="mb-3">
+                {{ form.rating.label(class="form-label") }}
+                {{ form.rating(class="form-control", required=False) }}
+                <div id="ratingHelp" class="form-text">Παρακαλώ βαθμολογήστε την ταινία με έναν αριθμό από το 1 έως το 100.</div>
+                {% if form.rating.errors %}
+                  <ul class=errors>
+                  {% for error in form.rating.errors %}
+                    <li class="alert text-danger">{{ error }}</li>
+                  {% endfor %}
+                  </ul>
+                {% endif %}
+              </div>
+
+
+          <div class="mb-3">
+              {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+{% endblock content %}
