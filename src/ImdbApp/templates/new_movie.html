@@ -18,12 +18,12 @@
           {{ form.hidden_tag() }}
 
           <div class="mb-3">
-            {{ form.movie_title.label(class="form-label") }}
-            {{ form.movie_title(class="form-control", required=False) }}
-            <div id="movie_titleHelp" class="form-text">Παρακαλώ εισάγετε τον τίτλο της τανίας.</div>
-            {% if form.movie_title.errors %}
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control", required=False) }}
+            <div id="titleHelp" class="form-text">Παρακαλώ εισάγετε τον τίτλο της τανίας.</div>
+            {% if form.title.errors %}
               <ul class=errors>
-              {% for error in form.movie_title.errors %}
+              {% for error in form.title.errors %}
                 <li class="alert text-danger">{{ error }}</li>
               {% endfor %}
               </ul>
@@ -32,12 +32,12 @@
 
 
           <div class="mb-3">
-            {{ form.movie_body.label(class="form-label") }}
-            {{ form.movie_body(class="form-control", rows="5", required=False) }}
-            <div id="movie_bodyHelp" class="form-text">Παρακαλώ εισάγετε την πλοκή της τανίας.</div>
-            {% if form.movie_body.errors %}
+            {{ form.plot.label(class="form-label") }}
+            {{ form.plot(class="form-control", rows="5", required=False) }}
+            <div id="plotHelp" class="form-text">Παρακαλώ εισάγετε την πλοκή της τανίας.</div>
+            {% if form.plot.errors %}
               <ul class=errors>
-              {% for error in form.movie_body.errors %}
+              {% for error in form.plot.errors %}
                 <li class="alert text-danger">{{ error }}</li>
               {% endfor %}
               </ul>
@@ -46,12 +46,12 @@
 
 
               <div class="mb-3">
-                {{ form.movie_image.label(class="form-label") }}
-                {{ form.movie_image(class="form-control") }}
-                <div id="movie_imageHelp" class="form-text">Παρακαλώ δώστε μία εικόνα για την ταινία σας.</div>
-                    {% if form.movie_image.errors %}
+                {{ form.image.label(class="form-label") }}
+                {{ form.image(class="form-control") }}
+                <div id="imageHelp" class="form-text">Παρακαλώ δώστε μία εικόνα για την ταινία σας.</div>
+                    {% if form.image.errors %}
                     <ul class=errors>
-                    {% for error in form.movie_image.errors %}
+                    {% for error in form.image.errors %}
                       <li class="alert text-danger">{{ error }}</li>
                     {% endfor %}
                     </ul>

@@ -2,7 +2,7 @@
 
 
 {% block title %}
-    {{ movie.movie_title }}
+    {{ movie.title }}
 {% endblock title %}
 
 
@@ -16,13 +16,13 @@
 
         <div class="row my-3 p-3 bg-body rounded shadow-sm">
           <div class="col col-md-12">
-            {% if movie.movie_image and movie.movie_image != 'default_movie_image.jpg' %}
-              <img src="{{ url_for('static', filename='images/movies_images/'+movie.movie_image) }}" alt="" class="img-responsive a_image" width="100%">
+            {% if movie.image and movie.image != 'default_image.jpg' %}
+              <img src="{{ url_for('static', filename='images/movies_images/'+movie.image) }}" alt="" class="img-responsive a_image" width="480px">
             {% endif %}
           </div>
           <div class="col col-md-12">
             <div class="main-movie-title">
-              {{ movie.movie_title | safe }}
+              {{ movie.title | safe }}
             </div>
             <small class="movie_date">[{{ movie.date_created.strftime('%d-%m-%Y') }}]</small>
 
@@ -37,7 +37,7 @@
 
 
             <p class="main-movie-partial-text">
-              {{ movie.movie_body | safe }}
+              {{ movie.plot | safe }}
             </p>
             <p class="">Από 
               <span>

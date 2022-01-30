@@ -30,9 +30,14 @@ def unsupported_media_type(e):
     # note that we set the 415 status explicitly
     return render_template('errors/415.html'), 415
 
+@app.errorhandler(500)
+def Internal_Server_Error(e):
+    # note that we set the 500 status explicitly
+    return render_template('errors/500.html'), 500
 
 
 
+### Μέθοδος μετονομασίας και αποθήκευσης εικόνας ###
 # To size είναι ένα tuple της μορφής (640, 480)
 def image_save(image, where, size):
     random_filename = secrets.token_hex(12)
@@ -51,12 +56,15 @@ def image_save(image, where, size):
 
 
 
+@app.route("/home/")
 @app.route("/index/")
 @app.route("/")
 def root():
     page = request.args.get("page", 1, type=int)
     movies = Movie.query.order_by(Movie.date_created.desc()).paginate(per_page=5, page=page)
-    return render_template("index.html", movies=movies)
+    movies_by_rating = Movie.query.order_by(Movie.rating.desc()).paginate(per_page=5, page=page)
+    movies_by_release_year = Movie.query.order_by(Movie.rating.desc()).paginate(per_page=5, page=page)
+    return render_template("index.html", movies=movies, movies_by_rating=movies_by_rating, movies_by_release_year=movies_by_release_year )
 
 
 
@@ -143,31 +151,30 @@ def new_movie():
     form = NewMovieForm()
 
     if request.method == 'POST' and form.validate_on_submit():
-        movie_title = form.movie_title.data
-        movie_body = form.movie_body.data
+        title = form.title.data
+        plot = form.plot.data
         release_year = form.release_year.data
-        rating = form.rating.data
+        rating = str(int(form.rating.data)/10)
 
-
-        if form.movie_image.data:
+        if form.image.data:
             try:
-                image_file = image_save(form.movie_image.data, 'movies_images', (640, 360))
+                image_file = image_save(form.image.data, 'movies_images', (640, 360))
             except:
                 abort(415)
 
-            movie = Movie(movie_title=movie_title,
-                              movie_body=movie_body,
+            movie = Movie(title=title,
+                              plot=plot,
                               author=current_user,
-                              movie_image=image_file,
+                              image=image_file,
                               release_year=release_year,
                               rating=rating)
         else:
-            movie = Movie(movie_title=movie_title, movie_body=movie_body, author=current_user, release_year=release_year, rating=rating)
-
+            movie = Movie(title=title, plot=plot, author=current_user, release_year=release_year, rating=rating)
+        
         db.session.add(movie)
         db.session.commit()
 
-        flash(f"Το άρθρο με τίτλο {movie.movie_title} δημιουργήθηκε με επιτυχία", "success")
+        flash(f"Το άρθρο με τίτλο {movie.title} δημιουργήθηκε με επιτυχία", "success")
 
         return redirect(url_for("root"))
 
@@ -246,25 +253,27 @@ def edit_movie(movie_id):
 
     movie = Movie.query.filter_by(id=movie_id, author=current_user).first_or_404()
 
-    form = NewMovieForm(movie_title=movie.movie_title, movie_body=movie.movie_body)
+    form = NewMovieForm(title=movie.title, plot=movie.plot, release_year = movie.release_year, rating=int(10*movie.rating) )
 
     if request.method == 'POST' and form.validate_on_submit():
-        movie.movie_title = form.movie_title.data
-        movie.movie_body = form.movie_body.data
+        movie.title = form.title.data
+        movie.plot = form.plot.data
+        movie.release_year = form.release_year.data
+        movie.rating = str(int(form.rating.data)/10)
 
 
-        if form.movie_image.data:
+        if form.image.data:
             try:
-                image_file = image_save(form.movie_image.data, 'movies_images', (640, 360))
+                image_file = image_save(form.image.data, 'movies_images', (640, 360))
             except:
                 abort(415)
 
-            movie.movie_image = image_file
+            movie.image = image_file
 
 
         db.session.commit()
 
-        flash(f"Το άρθρο με τίτλο <b>{movie.movie_title}</b> ενημερώθηκε με επιτυχία.", "success")
+        flash(f"Το άρθρο με τίτλο <b>{movie.title}</b> ενημερώθηκε με επιτυχία.", "success")
 
         return redirect(url_for('root'))
 

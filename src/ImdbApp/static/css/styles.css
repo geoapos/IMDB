@@ -80,6 +80,12 @@ footer{
 	margin: 10px;
 }
 
+.rating-image{
+	width: 15px;
+	height: 15px;
+	margin: 1px;
+}
+
 .a_image{
   border: 1px solid #ddd;
   border-radius: 8px;

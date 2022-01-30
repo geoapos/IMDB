@@ -22,13 +22,13 @@ class User(db.Model, UserMixin):
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    movie_title = db.Column(db.String(50), nullable=False)
-    movie_body = db.Column(db.Text(), nullable=False)
-    movie_image = db.Column(db.String(30), nullable=False, default='default_movie_image.jpg')
+    title = db.Column(db.String(50), nullable=False)
+    plot = db.Column(db.Text(), nullable=False)
+    image = db.Column(db.String(30), nullable=False, default='default_image.jpg')
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    release_year = db.Column(db.String(4), nullable=False)
-    rating = db.Column(db.String(2), nullable=False)
+    release_year = db.Column(db.Integer(), nullable=False, default=2000)
+    rating = db.Column(db.Integer(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"{self.date_created}: {self.movie_title}"
+        return f"{self.date_created}: {self.title}"

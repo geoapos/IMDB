@@ -8,23 +8,37 @@
 
 {% block content %}
 
+<hr>
+<div class="align-buttons d-flex justify-content-center">
+
+  <a class="btn btn-primary btn-sm mt-1 mb-1" href="{{ url_for('root', ordering_by='rating') }}">Ταξινόμηση βάσει βαθμολογίας</a>
+  &nbsp;&nbsp;&nbsp; 
+  <a class="btn btn-primary btn-sm mt-1 mb-1" href="{{ url_for('root', ordering_by='release_year') }}">Ταξινόμηση βάσει έτους προβολής</a>
+
+</div>
+<hr>
+
 {% if movies %}
     {% for movie in movies.items %}
 
         
         <div class="row my-3 p-3 bg-body rounded shadow-sm">
           <div class="col col-md-12">
-            {% if movie.movie_image and movie.movie_image != 'default_movie_image.jpg' %}
-              <img src="{{ url_for('static', filename='images/movies_images/'+movie.movie_image) }}" alt="" class="img-responsive a_image" width="640px" height="360px">
+            {% if movie.image and movie.image != 'default_image.jpg' %}
+              <img src="{{ url_for('static', filename='images/movies_images/'+movie.image) }}" alt="" class="img-responsive a_image" width="480px">
             {% endif %}
           </div>
+
           <div class="col col-md-12">
             <div class="main-movie-title">
-              <a class="movie_title" href="{{ url_for('full_movie', movie_id=movie.id) }}">{{ movie.movie_title | safe }}</a>
+              <a class="title" href="{{ url_for('full_movie', movie_id=movie.id) }}">{{ movie.title | safe }} ({{ movie.release_year | safe }})
+                <img class="rounded-circle rating-image" alt="star-rating" src="{{ url_for('static', filename='images/star-rating.jpg') }}" data-holder-rendered="true" data-bs-toggle="tooltip" data-bs-placement="top" title="rating">
+              [{{ movie.rating | safe }}] </a>
             </div>
+
             <small class="movie_date">[{{ movie.date_created.strftime('%d-%m-%Y') }}]</small>
             <p class="main-movie-partial-text">
-              {{ movie.movie_body | truncate(255) | safe }}
+              {{ movie.plot | truncate(255) | safe }}
             </p>
             <p class="">Από 
               <span>
@@ -34,6 +48,7 @@
               </span>
             </p>
           </div>
+
         </div>
 
         <hr>

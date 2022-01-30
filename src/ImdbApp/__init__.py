@@ -8,8 +8,8 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = 'b668cbc68d29fd2b7f5976c54c39f6ec'
-app.config['WTF_CSRF_SECRET_KEY'] = 'fe9d487ba2c9a1f13a5d72fa0d76d3fb'
+app.config["SECRET_KEY"] = '\x84\x19p\x02\x86\xcb\xf5V!\xa5?\x86\x80.\xce\xd3\x0cx\x828\x90(\xd9'
+app.config['WTF_CSRF_SECRET_KEY'] = '\xb0\xcbx\xd3f\x7f\x11%\xf7`\x8e\xe4jU\x9f|\xe0\x0cRR\x04\x88wi'
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ImdbApp_database.db"
 #app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://geoapos:12345@localhost/ImdbApp_database.db"
