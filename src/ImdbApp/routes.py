@@ -58,13 +58,20 @@ def image_save(image, where, size):
 
 @app.route("/home/")
 @app.route("/index/")
+@app.route("/<ordering_by>")
 @app.route("/")
-def root():
+def root(ordering_by=None):
+    
     page = request.args.get("page", 1, type=int)
-    movies = Movie.query.order_by(Movie.date_created.desc()).paginate(per_page=5, page=page)
-    movies_by_rating = Movie.query.order_by(Movie.rating.desc()).paginate(per_page=5, page=page)
-    movies_by_release_year = Movie.query.order_by(Movie.rating.desc()).paginate(per_page=5, page=page)
-    return render_template("index.html", movies=movies, movies_by_rating=movies_by_rating, movies_by_release_year=movies_by_release_year )
+    
+    if ordering_by=="rating":
+        movies = Movie.query.order_by(Movie.rating.desc()).paginate(per_page=5, page=page)
+    elif ordering_by=="release_year":
+        movies = Movie.query.order_by(Movie.release_year.desc()).paginate(per_page=5, page=page)
+    else:
+        movies = Movie.query.order_by(Movie.date_created.desc()).paginate(per_page=5, page=page)
+    
+    return render_template("index.html", movies=movies, ordering_by=ordering_by)
 
 
 
