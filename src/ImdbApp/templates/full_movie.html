@@ -20,10 +20,15 @@
               <img src="{{ url_for('static', filename='images/movies_images/'+movie.image) }}" alt="" class="img-responsive a_image" width="480px">
             {% endif %}
           </div>
+          
+          
           <div class="col col-md-12">
             <div class="main-movie-title">
-              {{ movie.title | safe }}
+              <a class="title" href="{{ url_for('full_movie', movie_id=movie.id) }}">{{ movie.title | safe }} ({{ movie.release_year | safe }})
+                <img class="rounded-circle rating-image" alt="star-rating" src="{{ url_for('static', filename='images/star-rating.jpg') }}" data-holder-rendered="true" data-bs-toggle="tooltip" data-bs-placement="top" title="rating">
+              [{{ movie.rating | safe }}] </a>
             </div>
+
             <small class="movie_date">[{{ movie.date_created.strftime('%d-%m-%Y') }}]</small>
 
 
@@ -66,7 +71,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Είστε σίγουρος/η ότι θέλετε να διαγράψετε αυτό το άρθρο;
+        Είστε σίγουρος/η ότι θέλετε να διαγράψετε αυτό τη ταινία;
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Όχι</button>

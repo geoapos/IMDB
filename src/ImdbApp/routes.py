@@ -1,3 +1,4 @@
+from crypt import methods
 from datetime import datetime
 from flask import (render_template,
                    redirect,
@@ -75,15 +76,23 @@ def root(ordering_by=None):
 
 
 
-@app.route("/movies_by_author/<int:author_id>")
+@app.route("/movies_by_author/<int:author_id>", methods=['GET'])
 def movies_by_author(author_id):
 
     user = User.query.get_or_404(author_id)
-
     page = request.args.get("page", 1, type=int)
-    movies = Movie.query.filter_by(author=user).order_by(Movie.date_created.desc()).paginate(per_page=5, page=page)
+    ordering_by=request.args.get("ordering_by", None)
 
-    return render_template("movies_by_author.html", movies=movies, author=user)
+    if ordering_by=="rating":
+        movies = Movie.query.filter_by(author=user).order_by(Movie.rating.desc()).paginate(per_page=2, page=page)
+    elif ordering_by=="release_year":
+        movies = Movie.query.filter_by(author=user).order_by(Movie.release_year.desc()).paginate(per_page=2, page=page)
+    else:
+        movies = Movie.query.filter_by(author=user).order_by(Movie.date_created.desc()).paginate(per_page=2, page=page)
+
+    count=len(Movie.query.filter_by(author=user).all())
+    
+    return render_template("movies_by_author.html", movies=movies, author=user, ordering_by=ordering_by, count_movies_by_User=count)
 
 
 
@@ -161,7 +170,7 @@ def new_movie():
         title = form.title.data
         plot = form.plot.data
         release_year = form.release_year.data
-        rating = str(int(form.rating.data)/10)
+        rating = float(int(form.rating.data)/10)
 
         if form.image.data:
             try:
@@ -181,7 +190,7 @@ def new_movie():
         db.session.add(movie)
         db.session.commit()
 
-        flash(f"Το άρθρο με τίτλο {movie.title} δημιουργήθηκε με επιτυχία", "success")
+        flash(f"Η ταινία με τίτλο {movie.title} δημιουργήθηκε με επιτυχία", "success")
 
         return redirect(url_for("root"))
 
@@ -210,11 +219,11 @@ def delete_movie(movie_id):
         db.session.delete(movie)
         db.session.commit()
 
-        flash("Το άρθρο διεγράφη με επιτυχία.", "success")
+        flash("Η ταινία διεγράφη με επιτυχία.", "success")
 
         return redirect(url_for("root"))
 
-    flash("Το άρθρο δε βρέθηκε.", "warning")
+    flash("Η ταινία δε βρέθηκε.", "warning")
 
     return redirect(url_for("root"))
 
@@ -259,14 +268,16 @@ def account():
 def edit_movie(movie_id):
 
     movie = Movie.query.filter_by(id=movie_id, author=current_user).first_or_404()
-
-    form = NewMovieForm(title=movie.title, plot=movie.plot, release_year = movie.release_year, rating=int(10*movie.rating) )
+    
+    form = NewMovieForm(title=movie.title, plot=movie.plot, image=movie.image, release_year = movie.release_year, rating=int(10*movie.rating) )
 
     if request.method == 'POST' and form.validate_on_submit():
         movie.title = form.title.data
         movie.plot = form.plot.data
+        movie.image= form.image.data
+        
         movie.release_year = form.release_year.data
-        movie.rating = str(int(form.rating.data)/10)
+        movie.rating = float(int(form.rating.data)/10)
 
 
         if form.image.data:
@@ -280,7 +291,7 @@ def edit_movie(movie_id):
 
         db.session.commit()
 
-        flash(f"Το άρθρο με τίτλο <b>{movie.title}</b> ενημερώθηκε με επιτυχία.", "success")
+        flash(f"Η επεξεργασία της ταινίας <b>{movie.title}</b> έγινε με επιτυχία.", "success")
 
         return redirect(url_for('root'))
 
